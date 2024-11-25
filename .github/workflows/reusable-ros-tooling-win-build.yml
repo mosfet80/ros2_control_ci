@@ -97,11 +97,13 @@ jobs:
         run: |
             $boost_ver = "5.2.1"
             $basePath = "C:\boost"
+            $b2Path = "C:\b2"
 
             Write-Host "Downloading and unzip Boost version $boost_ver..."
-            wget https://github.com/bfgroup/b2/releases/download/$boost_ver/b2-$boost_ver.7z -OutFile b2-$boost_ver.7z
-            7z x b2-$boost_ver.7z -o./b2
-            cd b2
+            New-Item -ItemType Directory -Force -Path $b2Path
+            cd $b2Path
+            wget https://github.com/bfgroup/b2/releases/download/$boost_ver/b2-$boost_ver.7z
+            7z x b2-$boost_ver.7z
 
             Write-Host "Bootstrapping Boost.Build... to $basePath"
             .\bootstrap.bat
