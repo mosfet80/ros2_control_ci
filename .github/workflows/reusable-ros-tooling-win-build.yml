@@ -92,6 +92,27 @@ jobs:
           required-ros-distributions: ${{ inputs.ros_distro }}
           use-ros2-testing: true
 
+      - name: Install dependencies
+        # we need a cmake target for boost, so we have to install it manually
+        run: |
+            $boost_ver = "5.2.1"
+            $basePath = "C:\boost"
+
+            Write-Host "Downloading and unzip Boost version $boost_ver..."
+            wget https://github.com/bfgroup/b2/releases/download/$boost_ver/b2-$boost_ver.7z -OutFile b2-$boost_ver.7z
+            7z x b2-$boost_ver.7z -o./b2
+            cd b2
+
+            Write-Host "Bootstrapping Boost.Build... to $basePath"
+            .\bootstrap.bat
+            b2 install --prefix=$basePath
+            $newPath = "$basePath\bin;$env:PATH"
+            Add-Content -Path $env:GITHUB_ENV -Value "PATH=$newPath"
+
+            Write-Host "Building Boost libraries..."
+            cd $basePath
+            b2 toolset=msvc --build-type=complete stage
+
       - name: Checkout default ref when build is not scheduled
         if: ${{ github.event_name != 'schedule' }}
         uses: actions/checkout@v4
