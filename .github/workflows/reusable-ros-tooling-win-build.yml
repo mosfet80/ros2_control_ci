@@ -94,6 +94,7 @@ jobs:
 
       - name: Install dependencies
         # we need a cmake target for boost, so we have to install it manually
+        # https://www.boost.org/doc/libs/1_86_0/more/getting_started/windows.html#prepare-to-use-a-boost-library-binary
         run: |
             $boost_ver = "5.2.1"
             $basePath = "C:\boost"
@@ -106,6 +107,9 @@ jobs:
             7z x b2-$boost_ver.7z
 
             Write-Host "Bootstrapping Boost.Build... to $basePath"
+            ls
+            cd tools\build
+            ls
             .\bootstrap.bat
             b2 install --prefix=$basePath
             $newPath = "$basePath\bin;$env:PATH"
